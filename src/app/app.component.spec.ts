@@ -14,16 +14,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'api-scan-qr-code' title`, () => {
+  it(`should have the 'recruitment-frontend' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('api-scan-qr-code');
+    expect(app.title).toEqual('recruitment-frontend');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, api-scan-qr-code');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, recruitment-frontend');
   });
 });

@@ -1,0 +1,278 @@
+<div class="col-lg-12 col-sm-12 mb-3">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top py-3 px-lg-3 shadow">
+        <div class="container">
+          <!-- Logo ou nom de la plateforme -->
+          <a class="navbar-brand fw-bold" href="#">
+              SMIYC
+          </a>
+      
+          <!-- Bouton pour menu burger en mode mobile -->
+          <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+      
+          <!-- Contenu du menu -->
+          <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+            
+            <!-- Menu centré -->
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 text-center">
+              <li class="nav-item">
+                <a class="nav-link active me-2" aria-current="page" href="#">Accueil</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link me-2" href="#">A propos</a>
+              </li>
+              
+              <li class="nav-item">
+                <a class="nav-link me-2" href="#">Contact</a>
+              </li>
+              
+            </ul>
+      
+            <!-- Boutons à droite -->
+            <div class="d-flex">
+              <a routerLink="/login" class="btn btn-primary rounded-0 border-0">Se connecter</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+      
+</div>
+
+ 
+  <div class="col-lg-12 col-sm-12 py-5">
+      <div class="container mt-5 py-5">
+      <div class="row align-items-center">
+        
+        <!-- Partie gauche : texte -->
+        <div class="col-lg-8 col-sm-12 text-start">
+            <h3 class="mb-3 fw-bold title_1 text-uppercase">SMIYC : Un qr code, un t-shirt, une identité.</h3>
+            <p class="mb-4 text-justify">
+              Une solution intelligente conçue par <strong>SMIYC</strong>, permettant d’associer à chaque t-shirt un QR code unique et personnalisable.  
+              Une fois scanné, ce QR code redirige vers un lien configuré par son propriétaire, facilitant le partage instantané de ses réseaux sociaux ou toute autre information.  
+              Grâce à une interface simple et intuitive, chaque utilisateur peut activer, modifier ou désactiver son QR code en quelques clics, rendant chaque t-shirt véritablement interactif.
+            </p>
+            <a href="#" class="btn btn-primary border-0 rounded-0 btn-responsive">Découvrir la plateforme</a>
+
+        </div>
+  
+        <!-- Partie droite : image -->
+        <div class="col-lg-4 col-sm-12 text-center">
+          <img src="assets/images/0f52086d-0e92-4292-885d-fa62f2da45f8.png" alt="Search your job" class="img-fluid" style="max-height: 350px;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<div class="col-lg-12 col-sm-12">
+  <div class="container mt-5">
+    <h3 class="mb-3 fw-bold title_1 text-uppercase text-center">QR Codes SMIYC générés</h3>
+    <p class="mb-4 text-center">
+      Consultez ici tous vos QR codes générés automatiquement. Chacun est unique, associé à un t-shirt, et prêt à être scanné pour activer ou afficher un profil personnalisé.  
+      Gérez facilement vos QR codes : activez-les, désactivez-les ou modifiez-les depuis cette interface intuitive.
+    </p>
+
+    <!-- Affichage du chargement ou message d'absence de données -->
+    <tr class="text-center" *ngIf="data.length === 0 || isLoading">
+      <td colspan="12">
+        <div class="d-flex align-items-center gap-2 justify-content-center" *ngIf="isLoading">
+          <div class="spinner-border spinner-border-sm text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <span>Chargement...</span>
+        </div>
+        <span *ngIf="!isLoading">
+          <p class="mb-0 alert alert-warning border-0">
+          <i class="fa-solid fa-triangle-exclamation text-warning me-2"></i>
+            Aucune donnée disponible
+        </p>
+        </span>
+      </td>
+    </tr>
+
+    <ng-container *ngIf="!isLoading">
+      <div class="row" *ngIf="data.length > 0">
+        <div class="col-md-4 mb-4" *ngFor="let qr_code of data">
+          <div class="card h-100 shadow border-0 rounded-0">
+            <div class="card-body text-center">
+              <img
+                [src]="CONFIG.baseUrl + '/media/' + qr_code.image_path"
+                alt="QR Code"
+                width="120"
+                height="120"
+                class="img-thumbnail mb-3"
+                (click)="openQrModal(qr_code)"
+              />
+              <p class="mb-0 text-muted small">{{ qr_code.code }}</p>
+              <div class="d-flex align-items-center justify-content-between">
+            <!-- Bloc bouton Scanner -->
+            <div class="mb-0">
+              <button 
+                *ngIf="qr_code.is_used"
+                (click)="handleQrClick(qr_code)"
+                class="btn btn-primary border-0 btn-sm rounded-0 shadow-none me-2">
+                <i class="fa-solid fa-expand"></i> Scanner
+              </button>
+
+              <button 
+                *ngIf="!qr_code.is_used"
+                data-bs-toggle="modal" 
+                data-bs-target="#ScanData" 
+                (click)="openQrModal(qr_code)"
+                class="btn btn-primary border-0 btn-sm rounded-0 shadow-none me-2">
+                <i class="fa-solid fa-expand"></i> Scanner
+              </button>
+            </div>
+
+            <!-- Badge statut -->
+            <div class="mt-2">
+              <a 
+                [routerLink]="['/qr-code', qr_code.uuid]"
+                class="badge text-decoration-none border-0 rounded-0"
+                [ngClass]="qr_code.is_used ? 'badge-success' : 'badge-danger'">
+                {{ qr_code.is_used ? 'Activé' : 'Non utilisé' }}
+              </a>
+            </div>
+          </div>
+          </div>
+
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Bouton Voir plus -->
+  <div class="text-center mt-2">
+  <button 
+    class="btn btn-primary border-0 rounded-0" 
+    (click)="loadMore()" 
+    [disabled]="isLoading || currentPage >= totalPages">
+    <span *ngIf="!isLoading">Afficher plus <i class="fa-solid fa-arrows-rotate me-1"></i></span>
+    <span *ngIf="isLoading" class="d-flex align-items-center">
+      <div class="spinner-border spinner-border-sm text-light" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <span class="ms-2">Chargement...</span>
+    </span>
+    
+  </button>
+</div>
+</div>
+
+<div class="col-12 mt-5">
+  <footer class="text-center py-4 bg-dark text-white shadow-sm">
+    &copy; 2025 <strong>SMIYC</strong>. Tous droits réservés.
+  </footer>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="ScanData" tabindex="-1" aria-labelledby="ScanData" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 id="ScanData">Identification N° {{ data[0]?.code }}</h5>
+        <button type="button" class="btn-close shadow-none border-0" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="ServiceForm" (ngSubmit)="onSubmit()">
+          
+          <!-- Description -->
+          <p class="mb-3">Choisissez un réseau social pour votre QR code :</p>
+          
+          <div class="row mb-4 text-center">
+            <div class="col-lg-2 text-center mx-2">
+                <input type="radio" id="instagram" formControlName="social_link" class="btn-check" value="https://www.instagram.com" autocomplete="off" />
+                <label for="instagram">
+                <img src="assets/images/instagram.svg" class="img-thumbnail social-radio" alt="Instagram" style="width: 50px; height: 50px; object-fit: cover;">
+                </label>
+            </div>
+
+            <div class="col-lg-2 text-center mx-2">
+                <input type="radio" id="tiktok" formControlName="social_link" class="btn-check" value="https://www.tiktok.com" autocomplete="off" />
+                <label for="tiktok">
+                <img src="assets/images/tiktok.svg" class="img-thumbnail social-radio" alt="TikTok" style="width: 50px; height: 50px; object-fit: cover;">
+                </label>
+            </div>
+
+            <div class="col-lg-2 text-center mx-2">
+                <input type="radio" id="whatsapp" formControlName="social_link" class="btn-check" value="whatsapp" autocomplete="off" />
+                <label for="whatsapp">
+                <img src="assets/images/whatsapp.svg" class="img-thumbnail social-radio" alt="WhatsApp" style="width: 50px; height: 50px; object-fit: cover;">
+                </label>
+            </div>
+
+            <div class="col-lg-2 text-center mx-2">
+                <input type="radio" id="facebook" formControlName="social_link" class="btn-check" value="https://web.facebook.com" autocomplete="off" />
+                <label for="facebook">
+                <img src="assets/images/facebook-svgrepo-com.svg" class="img-thumbnail social-radio" alt="WhatsApp" style="width: 50px; height: 50px; object-fit: cover;">
+                </label>
+            </div>
+
+            <div class="col-lg-2 text-center mx-2">
+                <input type="radio" id="linkedin" formControlName="social_link" class="btn-check" value="https://www.linkedin.com" autocomplete="off" />
+                <label for="linkedin">
+                <img src="assets/images/linkedin.svg" class="img-thumbnail social-radio" alt="LinkedIn" style="width: 50px; height: 50px; object-fit: cover;">
+                </label>
+            </div>
+            </div>
+
+          <!-- QR code input (après réseaux sociaux) -->
+          <div class="form-floating mb-3">
+            <input type="text" 
+                   [ngClass]="{'is-invalid': ServiceForm.get('qr_code_uuid')?.invalid && ServiceForm.get('qr_code_uuid')?.touched}" 
+                   formControlName="qr_code_uuid" 
+                   readonly 
+                   class="form-control" 
+                   placeholder="Qr code">
+            <label for="floatingInput">Qr code</label>
+            <div *ngIf="ServiceForm.get('qr_code_uuid')?.invalid && ServiceForm.get('qr_code_uuid')?.touched" class="text-danger invalid-message">
+              Ce champ est requis.
+            </div>
+          </div>
+
+          <!-- Email input -->
+          <div class="form-floating mb-3">
+            <input type="email"  
+                   [ngClass]="{'is-invalid': ServiceForm.get('email')?.invalid && ServiceForm.get('email')?.touched}" 
+                   formControlName="email" 
+                   class="form-control" 
+                   placeholder="name@example.com">
+            <label for="floatingInput">Email</label>
+            <div *ngIf="ServiceForm.get('email')?.invalid && ServiceForm.get('email')?.touched" class="text-danger invalid-message">
+              Ce champ est requis.
+            </div>
+          </div>
+
+           <div class="form-floating mb-3">
+            <input type="url"  [ngClass]="{'is-invalid': ServiceForm.get('custom_social_link')?.invalid && ServiceForm.get('custom_social_link')?.touched}" formControlName="custom_social_link" class="form-control" placeholder="name@example.com">
+            <label for="floatingInput">Lien personnalisé de votre réseau social</label>
+             <div *ngIf="ServiceForm.get('custom_social_link')?.invalid && ServiceForm.get('custom_social_link')?.touched" class="text-danger invalid-message">
+                Ce champ est requis.
+            </div>
+            </div>
+
+          <!-- Boutons modal footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary border-0 rounded-0" [disabled]="isLoading" data-bs-dismiss="modal">
+              <i class="fa-solid fa-rectangle-xmark me-1"></i> Annuler
+            </button>
+            <button type="submit" 
+                    class="btn btn-primary border-0 rounded-0" 
+                    [disabled]="ServiceForm.invalid || isLoading">
+              <i class="fa-solid fa-fingerprint me-1"></i>
+              <span *ngIf="!isLoading">Identification</span>
+              <span *ngIf="isLoading">
+                <i class="spinner-border spinner-border-sm"></i> Identification en cours...
+              </span>
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

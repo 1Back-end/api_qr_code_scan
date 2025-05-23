@@ -1,0 +1,83 @@
+<div class="container col-lg-12 col-sm-12 mb-3 mt-5">
+  <div class="card shadow p-3 border-0">
+     <form [formGroup]="ServiceForm" (ngSubmit)="onSubmit()">
+    <h6><p class="mb-2">Choisissez un réseau social pour votre QR code :</p></h6>
+
+    <div class="d-flex gap-3 justify-content-center overflow-auto mt-5">
+      <div class="text-center">
+        <input type="radio" id="instagram" formControlName="social_link" class="btn-check" value="https://www.instagram.com" autocomplete="off" />
+        <label for="instagram">
+          <img src="assets/images/instagram.svg" class="img-thumbnail social-radio" alt="Instagram" style="width: 50px; height: 50px; object-fit: cover;">
+        </label>
+      </div>
+
+      <div class="text-center">
+        <input type="radio" id="tiktok" formControlName="social_link" class="btn-check" value="https://www.tiktok.com" autocomplete="off" />
+        <label for="tiktok">
+          <img src="assets/images/tiktok.svg" class="img-thumbnail social-radio" alt="TikTok" style="width: 50px; height: 50px; object-fit: cover;">
+        </label>
+      </div>
+
+      <div class="text-center">
+        <input type="radio" id="whatsapp" formControlName="social_link" class="btn-check" value="whatsapp" autocomplete="off" />
+        <label for="whatsapp">
+          <img src="assets/images/whatsapp.svg" class="img-thumbnail social-radio" alt="WhatsApp" style="width: 50px; height: 50px; object-fit: cover;">
+        </label>
+      </div>
+
+      <div class="text-center">
+        <input type="radio" id="facebook" formControlName="social_link" class="btn-check" value="https://web.facebook.com" autocomplete="off" />
+        <label for="facebook">
+          <img src="assets/images/facebook-svgrepo-com.svg" class="img-thumbnail social-radio" alt="Facebook" style="width: 50px; height: 50px; object-fit: cover;">
+        </label>
+      </div>
+
+      <div class="text-center">
+        <input type="radio" id="linkedin" formControlName="social_link" class="btn-check" value="https://www.linkedin.com" autocomplete="off" />
+        <label for="linkedin">
+          <img src="assets/images/linkedin.svg" class="img-thumbnail social-radio" alt="LinkedIn" style="width: 50px; height: 50px; object-fit: cover;">
+        </label>
+      </div>
+    </div>
+          <div class="form-floating mb-3">
+            <input type="email"  
+                   [ngClass]="{'is-invalid': ServiceForm.get('email')?.invalid && ServiceForm.get('email')?.touched}" 
+                   formControlName="email" 
+                   class="form-control" 
+                   placeholder="name@example.com">
+            <label for="floatingInput">Email</label>
+            <div *ngIf="ServiceForm.get('email')?.invalid && ServiceForm.get('email')?.touched" class="text-danger invalid-message">
+              Ce champ est requis.
+            </div>
+          </div>
+
+           <div class="form-floating mb-3">
+            <input type="url"  [ngClass]="{'is-invalid': ServiceForm.get('custom_social_link')?.invalid && ServiceForm.get('custom_social_link')?.touched}" formControlName="custom_social_link" class="form-control" placeholder="name@example.com">
+            <label for="floatingInput">Lien personnalisé de votre réseau</label>
+             <div *ngIf="ServiceForm.get('custom_social_link')?.invalid && ServiceForm.get('custom_social_link')?.touched" class="text-danger invalid-message">
+                Ce champ est requis.
+            </div>
+            </div>
+
+          <!-- Boutons modal footer -->
+            <div class="modal-footer d-flex justify-content-between w-100">
+            <!-- Bouton Annuler à gauche -->
+            <button type="button" class="btn btn-secondary border-0 rounded-0 btn-responsive mb-3" [disabled]="isLoading" data-bs-dismiss="modal">
+                <i class="fa-solid fa-rectangle-xmark me-1"></i> Annuler
+            </button>
+
+            <!-- Bouton Identification à droite -->
+            <button type="submit" 
+                    class="btn btn-primary border-0 rounded-0 btn-responsive mb-3" 
+                    [disabled]="ServiceForm.invalid || isLoading">
+                <i class="fa-solid fa-fingerprint me-1"></i>
+                <span *ngIf="!isLoading">Identification</span>
+                <span *ngIf="isLoading">
+                <i class="spinner-border spinner-border-sm"></i> Identification en cours...
+                </span>
+            </button>
+            </div>
+
+        </form>
+  </div>
+</div>
