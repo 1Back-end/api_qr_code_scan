@@ -109,5 +109,33 @@ deleteQrCode(): void {
     }
   });
 }
+
+downloadQrCode(imagePath: string): void {
+  this.isLoading = true;
+  this.toastr.info('Téléchargement en cours...', '', { timeOut: 2000 });
+
+  const url = `${this.CONFIG.baseUrl}/media/${imagePath}`;
+
+  fetch(url)
+    .then(response => response.blob())
+    .then(blob => {
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = imagePath.split('/').pop() || 'qr_code.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    })
+    .catch(() => {
+      this.toastr.error('Erreur lors du téléchargement');
+    })
+    .finally(() => {
+      this.isLoading = false;
+      this.toastr.success('Téléchargement terminé !');
+    });
+}
+
 }
 

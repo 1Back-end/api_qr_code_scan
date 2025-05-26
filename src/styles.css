@@ -296,11 +296,11 @@ select option{
     border-color: #ff0050; /* TikTok pink */
   }
 
-  input#whatsapp:checked + label > img {
-    border-color: #25D366; /* WhatsApp green */
+  input#twitter:checked + label > img {
+    border-color: #0077B5; /* WhatsApp green */
   }
 
-  input#linkedin:checked + label > img {
+  input#onlyFans:checked + label > img {
     border-color: #0077B5; /* LinkedIn blue */
   }
   input#facebook:checked + label > img {

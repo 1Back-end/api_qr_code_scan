@@ -52,14 +52,21 @@
 
                 <th scope="col" class="cursor-pointer">
                         <span class="d-flex align-items-center gap-2 cursor-pointer">
-                            Crée le
+                           Réseau social
                             <i class="fa-solid fa-filter"></i>
                         </span>
                 </th>
 
                 <th scope="col" class="cursor-pointer">
                         <span class="d-flex align-items-center gap-2 cursor-pointer">
-                            Mise à jour le
+                           Lien personnalisé
+                            <i class="fa-solid fa-filter"></i>
+                        </span>
+                </th>
+
+                <th scope="col" class="cursor-pointer">
+                        <span class="d-flex align-items-center gap-2 cursor-pointer">
+                            Crée le
                             <i class="fa-solid fa-filter"></i>
                         </span>
                 </th>
@@ -71,15 +78,6 @@
                             <i class="fa-solid fa-filter"></i>
                         </span>
                     </th>
-
-
-                <th scope="col" class="cursor-pointer">
-                        <span class="d-flex align-items-center gap-2 cursor-pointer">
-                           Actions
-                            <i class="fa-solid fa-filter"></i>
-                        </span>
-                </th>
-
                 </thead>
 
                 <tbody>
@@ -98,9 +96,12 @@
                     <tr *ngFor="let qr_code of data; let i = index">
                         <td>{{ i + 1 }}</td> <!-- Affiche le numéro de ligne -->
                         <td>{{ qr_code.qr_code.code }}</td> 
-                        <td>{{ qr_code.customer.email }}</td> 
+                        <td>{{ qr_code.customer.email }}</td>
+                         <td>
+                            {{ qr_code.social_link || 'Non spécifié' }}
+                        </td> 
+                        <td>{{ qr_code.custom_social_link }}</td> 
                         <td>{{ qr_code.date_added | date: 'dd/MM/yyyy HH:mm:ss' }}</td> <!-- Date de création -->
-                        <td>{{ qr_code.date_modified | date: 'dd/MM/yyyy HH:mm:ss' }}</td> <!-- Date de création -->
                         <td class="text-center">
                         <span *ngIf="qr_code.status === 'ACTIVED'" class="badge badge-success rounded-0">
                             Activé
@@ -109,16 +110,6 @@
                             Désactivé
                         </span>
                         </td>
-
-
-                        <td>
-                            <button  
-                                data-bs-toggle="modal" 
-                                data-bs-target="#DeleteOptions" 
-                                class="btn btn-danger  border-0 rounded-0 shadow-none">
-                                    <i class="fa-solid fa-trash me-1"></i> Supprimer
-                            </button>
-                          </td>
 
                     </tr>
                     </ng-container>
@@ -161,4 +152,40 @@
             </div>
         </div>
     </div>
+</div>
+
+
+
+<!-- Modal de suppression -->
+<div class="modal fade" id="DeleteOptions" tabindex="-1" aria-labelledby="DeleteOptionsLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="DeleteOptionsLabel">Confirmation de suppression</h1>
+        <button type="button" class="btn-close border-0 shadow-none" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-0 alert alert-warning border-0">
+          <i class="fa-solid fa-triangle-exclamation text-warning me-2"></i>
+          Êtes-vous sûr de vouloir <strong>supprimer le QR code N° {{ data[0]?.qr_code.code }}</strong> ? Cette action est irréversible.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary border-0 rounded-0" [disabled]="isLoading" data-bs-dismiss="modal">
+          <i class="fa-solid fa-rectangle-xmark me-1"></i> Annuler
+        </button>
+        <button type="button" 
+                class="btn btn-danger border-0 rounded-0"
+                *ngIf="role.getUserRole() === 'SUPER_ADMIN'"
+                (click)="deleteQrCode()"
+                [disabled]="isLoading">
+          <i class="fa-solid fa-trash-can me-1"></i>
+          <span *ngIf="!isLoading">Supprimer</span>
+          <span *ngIf="isLoading">
+            <i class="spinner-border spinner-border-sm"></i> Suppression en cours...
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

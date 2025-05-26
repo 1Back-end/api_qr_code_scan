@@ -37,7 +37,7 @@ export class ScanComponent {
   constructor(private toastr: ToastrService, private fb: FormBuilder,public role: RoleService, private http: HttpClient,private route: ActivatedRoute) {
     this.ServiceForm = this.fb.group({
       qr_code_uuid: ['', Validators.required],
-      email : ['',Validators.required,Validators.email],
+      email : ['',Validators.required],
       social_link: ['', Validators.required],
       custom_social_link: ['',Validators.required]  // Optionnel, validé dynamiquement
 
@@ -45,14 +45,26 @@ export class ScanComponent {
 
   }
 
-  ngOnInit(): void {
-     // 👇 Récupération de l'UUID depuis l'URL
-    this.current_uuid = this.route.snapshot.paramMap.get('uuid');
-    
-    // 👇 Remplit le champ qr_code_uuid dans le formulaire
-    if (this.current_uuid) {
-      this.ServiceForm.patchValue({ qr_code_uuid: this.current_uuid });
-    }
+ngOnInit(): void {
+  this.current_uuid = this.route.snapshot.paramMap.get('uuid');
+
+  if (this.current_uuid) {
+    this.ServiceForm.patchValue({ qr_code_uuid: this.current_uuid });
+
+    // Appelle le endpoint status pour savoir si déjà utilisé
+    this.http.get<{ is_used: boolean }>(`${CONFIG.apiUrl}/qr_codes/status/${this.current_uuid}`)
+      .subscribe({
+        next: (res) => {
+          if (res.is_used) {
+            // Si activé, ouvre la redirection via le endpoint qui redirige
+            this.handleQrClick({ uuid: this.current_uuid });
+          }
+        },
+        error: (error:any) => {
+          this.toastr.error(error?.error?.detail);
+        }
+      });
+  }
 }
 
 
@@ -64,21 +76,21 @@ onSubmit(): void {
 
   this.http.post(`${CONFIG.apiUrl}/qr_codes/activate-qr-code`, formData).subscribe({
     next: (response: any) => {
-      const message = response?.message || 'QR code activé avec succès.';
-      this.toastr.success(message);
-      this.isLoading = false; // ✅ désactive le loader
+      this.toastr.success(response?.message || 'QR code activé avec succès.');
+      this.isLoading = false;
       this.ServiceForm.reset();
-      // Fermer modale si nécessaire ici
+      this.handleQrClick({ uuid: this.current_uuid }); // ✅ Redirection immédiate
     },
     error: (error) => {
-      const message = error?.error?.detail || 'Une erreur est survenue.';
-      this.toastr.error(message);
-      this.isLoading = false; // ✅ désactive le loader
+      this.toastr.error(error?.error?.detail || 'Une erreur est survenue.');
+      this.isLoading = false;
     },
-    
   });
 }
 
+handleQrClick(qr_code: any): void {
+  window.open(`${CONFIG.apiUrl}/qr_codes/qrcode/${this.current_uuid}`, '_blank');
+}
 
 
 }

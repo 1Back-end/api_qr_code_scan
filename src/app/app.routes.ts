@@ -37,7 +37,7 @@ export const routes: Routes = [
         { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
         { path: 'users', component: UtilisateursComponent, canActivate: [AuthGuard] },
         { path: 'users/add', component: AddUtilisateursComponent, canActivate: [AuthGuard] },
-        { path: 'users/edit/:uuid', component: EditUtilisateursComponent, canActivate: [AuthGuard],data: { renderMode: 'client' }},
+        { path: 'users/edit/:uuid', component: EditUtilisateursComponent, canActivate: [AuthGuard] },
         { path: 'qr_codes',component:QrCodesComponent,canActivate: [AuthGuard]},
         { path: 'my_qr_codes',component:MyQrCodesComponent,canActivate:[AuthGuard]},
         { path: 'qr_codes_scan',component:QrCodeScansComponent,canActivate:[AuthGuard]},
@@ -51,6 +51,6 @@ export const routes: Routes = [
   { path: 'auth/forgot-password', component: ForgotPasswordComponent },
   { path: 'auth/code-otp', component: CodeOtpComponent },
   { path: 'auth/reset-password', component: ResetPasswordComponent },
-  { path: 'scan/:uuid', component: ScanComponent,data: { renderMode: 'client' }},
+  { path: 'scan/:uuid', component: ScanComponent },
   
 ];

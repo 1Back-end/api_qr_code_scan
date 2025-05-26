@@ -28,6 +28,8 @@ export class QrCodeScansComponent {
   CONFIG = CONFIG;
   selectedQrCode: any;
   current_uuid: string | null = null;
+   serviceToDelete: any = null;
+
 
 
 
@@ -54,10 +56,11 @@ getscanqrcodes(): void {
       this.totalPages = response.pages; // ✅ Correspond à "pages" dans ta réponse
       this.totalItems = response.total;
       this.isLoading = false;
-      // console.log(response.data)
+      console.log(response.data)
     },
     (error) => {
       this.toastr.error('Erreur lors du chargement des données');
+      console.log(error);
       this.isLoading = false;
     }
   );
@@ -68,6 +71,38 @@ getscanqrcodes(): void {
     this.currentPage = page;
     this.getscanqrcodes();
   }
+openDeleteModal(qr_uuid: string): void {
+  console.log('QR UUID sélectionné :', qr_uuid);
+  this.serviceToDelete = qr_uuid;
+}
+
+deleteQrCode(): void {
+  if (!this.serviceToDelete || this.isLoading) return;
+  this.isLoading = true;
+  
+  const payload = {
+    uuid: this.serviceToDelete // Vérifiez que cette valeur est bien une chaîne UUID valide
+  };
+  console.log(payload)
+
+  this.http.put(`${CONFIG.apiUrl}/qr_codes/delete-qr-code-scan`, payload).subscribe({
+    next: (response: any) => {
+      const message = response?.message || 'QR code supprimé avec succès.';
+      this.toastr.success(message);
+      this.isLoading = false;
+      this.getscanqrcodes(); // Recharge la liste
+      this.serviceToDelete = null; // reset après suppression
+    },
+    error: (error: any) => {
+      console.error('Erreur lors de la suppression du QR code:', error);
+      const message = error?.error?.detail || 'Une erreur est survenue lors de la suppression.';
+      this.toastr.error(message);
+      this.isLoading = false;
+    }
+  });
+}
+
+
 
 
 }
